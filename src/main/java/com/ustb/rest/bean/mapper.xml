@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.ustb.mapper.ShopMapper">
+	<resultMap type="edu.ustb.domain.Shop" id="shopMap">
+		<id column="shop_id" property="shopId" />
+		<result column="shop_name" property="shopName" />
+		<result column="shop_desc" property="shopDesc" />
+		<result column="shop_addr" property="shopAddr" />
+		<result column="phone" property="phone" />
+		<result column="shop_img" property="shopImg" />
+		<result column="priority" property="priority" />
+		<result column="create_time" property="createTime" />
+		<result column="last_edit_time" property="lastEditTime" />
+		<result column="enable_status" property="enableStatus" />
+		<result column="advice" property="advice" />
+		<!-- Area -->
+		<result column="area_id" property="area.areaId" />
+		<result column="area_name" property="area.areaName" />
+		<!-- ShopCategory -->
+		<result column="shop_category_id" property="shopCategory.shopCategoryId" />
+		<result column="shop_category_name" property="shopCategory.shopCategoryName" />
+		<!-- PersonInfo -->
+		<result column="user_id" property="owner.userId" />
+		<result column="name" property="owner.name" />
+	</resultMap>
+	<update id="updateShop" parameterType="edu.ustb.domain.Shop">
+		update tb_shop
+		<set>
+			<if test="shopName != null">shop_name=#{shopName},</if>
+			<if test="shopDesc != null">shop_desc=#{shopDesc},</if>
+			<if test="shopAddr != null">shop_addr=#{shopAddr},</if>
+			<if test="phone != null">phone=#{phone},</if>
+			<if test="shopImg != null">shop_img=#{shopImg},</if>
+			<if test="priority != null">priority=#{priority},</if>
+			<if test="lastEditTime != null">last_edit_time=#{lastEditTime},</if>
+			<if test="enableStatus != null">enable_status=#{enableStatus},</if>
+			<if test="advice != null">advice=#{advice},</if>
+			<if test="area != null">area_id=#{area.areaId},</if>
+			<if test="shopCategory != null">shop_category_id=#{shopCategory.shopCategoryId}</if>
+		</set>
+		where shop_id=#{shopId}
+	</update>
+	<!--useGeneratedKeys获取数据库的自增主键值 -->
+	<!--keyColumn主键值与实体对象的keyProperty绑定 -->
+	<insert id="insertShop" useGeneratedKeys="true" keyColumn="shop_id"
+		keyProperty="shopId">
+		INSERT INTO
+		tb_shop(owner_id, area_id, shop_category_id,
+		shop_name, shop_desc, shop_addr,
+		phone, shop_img, priority,
+		create_time, last_edit_time, enable_status,
+		advice)
+		VALUES
+		(#{owner.userId},#{area.areaId},#{shopCategory.shopCategoryId},#{shopName},
+		#{shopDesc},#{shopAddr},#{phone},#{shopImg},#{priority},
+		#{createTime},#{lastEditTime}, #{enableStatus},#{advice})
+	</insert>
+
+	<update id="updateShopImg">
+		update tb_shop
+		set shop_img=#{shopImg}
+		where
+		shop_id=#{shopId}
+	</update>
+
+	<select id="queryByShopId" resultMap="shopMap" parameterType="Long">
+		SELECT
+		tb_shop.shop_id,
+		tb_shop.owner_id,
+		tb_shop.area_id,
+		tb_shop.shop_category_id,
+		tb_shop.shop_name,
+		tb_shop.shop_desc,
+		tb_shop.shop_addr,
+		tb_shop.phone,
+		tb_shop.shop_img,
+		tb_shop.priority,
+		tb_shop.create_time,
+		tb_shop.last_edit_time,
+		tb_shop.enable_status,
+		tb_shop.advice,
+		tb_shop_category.shop_category_id,
+		tb_shop_category.shop_category_name,
+		tb_shop_category.shop_category_desc,
+		tb_shop_category.shop_category_img,
+		tb_shop_category.priority,
+		tb_shop_category.create_time,
+		tb_shop_category.last_edit_time,
+		tb_shop_category.parent_id,
+		tb_person_info.user_id,
+		tb_person_info.`name`,
+		tb_person_info.profile_img,
+		tb_person_info.email,
+		tb_person_info.gender,
+		tb_person_info.enable_status,
+		tb_person_info.user_type,
+		tb_person_info.create_time,
+		tb_person_info.last_edit_time,
+		tb_area.area_id,
+		tb_area.area_name,
+		tb_area.priority,
+		tb_area.create_time,
+		tb_area.last_edit_time
+		FROM tb_shop
+		INNER JOIN
+		tb_shop_category ON tb_shop.shop_category_id =
+		tb_shop_category.shop_category_id
+		INNER JOIN tb_person_info ON
+		tb_shop.owner_id = tb_person_info.user_id
+		INNER JOIN tb_area ON
+		tb_shop.area_id = tb_area.area_id
+		WHERE tb_shop.shop_id = #{shopId}
+	</select>
+
+	<select id="queryShopList" resultMap="shopMap">
+		SELECT
+		tb_shop.shop_id,
+		tb_shop.owner_id,
+		tb_shop.area_id,
+		tb_shop.shop_category_id,
+		tb_shop.shop_name,
+		tb_shop.shop_desc,
+		tb_shop.shop_addr,
+		tb_shop.phone,
+		tb_shop.shop_img,
+		tb_shop.priority,
+		tb_shop.create_time,
+		tb_shop.last_edit_time,
+		tb_shop.enable_status,
+		tb_shop.advice,
+		tb_shop_category.shop_category_id,
+		tb_shop_category.shop_category_name,
+		tb_shop_category.shop_category_desc,
+		tb_shop_category.shop_category_img,
+		tb_shop_category.priority,
+		tb_shop_category.create_time,
+		tb_shop_category.last_edit_time,
+		tb_shop_category.parent_id,
+		tb_person_info.user_id,
+		tb_person_info.`name`,
+		tb_person_info.profile_img,
+		tb_person_info.email,
+		tb_person_info.gender,
+		tb_person_info.enable_status,
+		tb_person_info.user_type,
+		tb_person_info.create_time,
+		tb_person_info.last_edit_time,
+		tb_area.area_id,
+		tb_area.area_name,
+		tb_area.priority,
+		tb_area.create_time,
+		tb_area.last_edit_time
+		FROM
+		tb_shop
+		INNER JOIN
+		tb_shop_category ON tb_shop.shop_category_id =
+		tb_shop_category.shop_category_id
+		INNER JOIN tb_person_info ON
+		tb_shop.owner_id = tb_person_info.user_id
+		INNER JOIN tb_area ON
+		tb_shop.area_id = tb_area.area_id
+		where tb_shop.owner_id = #{userId}
+		ORDER BY tb_shop.priority DESC
+	</select>
+</mapper>
